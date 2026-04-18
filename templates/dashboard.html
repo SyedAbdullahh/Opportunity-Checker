@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opportunity Inbox Copilot - Dashboard</title>
+  <style>
+    :root {
+      --bg: #f3f6f1;
+      --ink: #202327;
+      --accent: #2b6cb0;
+      --accent-2: #f6ad55;
+      --card: #ffffff;
+      --muted: #5a616b;
+      --border: #d9e1d5;
+      --danger-bg: #fff2f2;
+      --danger-text: #a53a3a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(160deg, rgba(43, 108, 176, 0.08), transparent 30%),
+        linear-gradient(320deg, rgba(246, 173, 85, 0.12), transparent 25%),
+        var(--bg);
+      min-height: 100vh;
+      padding: 22px;
+    }
+    .container {
+      width: 100%;
+      max-width: 1040px;
+      margin: 0 auto;
+      display: grid;
+      gap: 16px;
+    }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    }
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.45rem;
+    }
+    .sub {
+      color: var(--muted);
+      margin-top: 4px;
+      font-size: 0.95rem;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 10px 14px;
+      text-decoration: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: transform 120ms ease, box-shadow 120ms ease;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-secondary {
+      background: #fff;
+      border-color: var(--border);
+      color: var(--ink);
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    }
+    form {
+      display: flex;
+      gap: 8px;
+      align-items: end;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    input[type="number"] {
+      width: 120px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 9px;
+      font-size: 0.95rem;
+    }
+    .error {
+      background: var(--danger-bg);
+      color: var(--danger-text);
+      border: 1px solid #ffd0d0;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 0.92rem;
+      margin-top: 12px;
+    }
+    .count {
+      color: var(--muted);
+      font-size: 0.94rem;
+      margin-top: 4px;
+    }
+    .list {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .mail {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fcfdfb;
+    }
+    .mail h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+    .mail .meta {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .mail p {
+      margin: 9px 0 0;
+      line-height: 1.45;
+      color: #30363f;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="panel top">
+      <div>
+        <h1>Inbox Scan</h1>
+        <div class="sub">Signed in as {{ user.email }}</div>
+      </div>
+      <div class="actions">
+        <a class="btn btn-secondary" href="{{ url_for('logout') }}">Logout</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 style="margin:0; font-size:1.12rem;">Retrieve Opportunity Emails</h2>
+      <div class="count">Current mode: retrieve and display only.</div>
+
+      <form action="{{ url_for('scan') }}" method="post">
+        <label>
+          Max Emails (1-15)
+          <input type="number" name="max_results" min="1" max="15" value="10" required>
+        </label>
+        <button class="btn btn-primary" type="submit">Scan Gmail</button>
+      </form>
+
+      {% if error %}
+        <div class="error">{{ error }}</div>
+      {% endif %}
+    </section>
+
+    <section class="panel">
+      <h2 style="margin:0; font-size:1.12rem;">Results</h2>
+      <div class="count">Fetched: {{ scanned_count }}</div>
+
+      {% if emails %}
+        <div class="list">
+          {% for item in emails %}
+            <article class="mail">
+              <h3>{{ item.subject }}</h3>
+              <div class="meta">
+                <span><strong>From:</strong> {{ item.from }}</span>
+                <span><strong>Date:</strong> {{ item.date }}</span>
+              </div>
+              <p>{{ item.preview }}</p>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p style="color:var(--muted);">No emails loaded yet. Click Scan Gmail.</p>
+      {% endif %}
+    </section>
+  </div>
+</body>
+</html>
