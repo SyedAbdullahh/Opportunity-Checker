@@ -91,7 +91,7 @@ def _missing_profile_message() -> str:
         "Current Semester: e.g 8th\n"
         "CGPA: Anywhere between 2.0-4.0 Range\n"
         "Skills/Interests: Any Skills AI, ML, NLP, Leadership, Management\n"
-        "Preferred Opportunity Types: Choose scholarship or internship\n"
+        "Preferred Opportunity Types: scholarship, internship, competition, admission, fellowship, other\n"
         "Financial Need Required (Yes/No):\n"
         "Location Preference: Country/City or Remote Please Specify.\n"
         "Past Experience: e.g BS student, internship projects\n\n"
@@ -102,8 +102,8 @@ def _missing_profile_message() -> str:
 def _scan_completion_message(scan_result: dict[str, Any] | None) -> str:
     ranked = scan_result.get("ranked_opportunities", []) if isinstance(scan_result, dict) else []
     if isinstance(ranked, list) and len(ranked) > 0:
-        return "Scan completed. Ranked scholarship opportunities are shown in cards."
-    return "Scan completed. No scholarship opportunities were found in the latest inbox scan."
+        return "Scan completed. Ranked opportunities are shown in cards."
+    return "Scan completed. No matching opportunities were found in the latest inbox scan."
 
 
 def _decode_base64(data: str) -> str:

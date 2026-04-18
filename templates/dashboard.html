@@ -993,7 +993,7 @@
       'Current Semester: e.g 8th',
       'CGPA: Anywhere between 2.0-4.0 Range',
       'Skills/Interests: Any Skills AI, ML, NLP, Leadership, Management',
-      'Preferred Opportunity Types: Choose scholarship or internship',
+      'Preferred Opportunity Types: scholarship, internship, competition, admission, fellowship, other',
       'Financial Need Required (Yes/No):',
       'Location Preference: Country/City or Remote Please Specify.',
       'Past Experience: e.g BS student, internship projects',
@@ -1198,16 +1198,14 @@
       const explainerTime = telemetry.explainer_time ?? 0;
       const candidates = telemetry.opportunity_candidates ?? 0;
       const nonOppSkipped = telemetry.non_opportunity_skipped ?? 0;
-      const nonScholarshipSkipped = telemetry.non_scholarship_skipped ?? 0;
-      const scholarshipRanked = telemetry.scholarship_ranked ?? 0;
+      const rankedCount = telemetry.ranked_opportunities_count ?? 0;
 
       systemLogEl.innerHTML = `
         <div class="title">Pipeline Telemetry</div>
         <div>Emails fetched: <strong>${esc(emails)}</strong></div>
         <div>Opportunity candidates: <strong>${esc(candidates)}</strong></div>
         <div>Skipped (not opportunity): <strong>${esc(nonOppSkipped)}</strong></div>
-        <div>Skipped (non-scholarship): <strong>${esc(nonScholarshipSkipped)}</strong></div>
-        <div>Scholarships ranked: <strong>${esc(scholarshipRanked)}</strong></div>
+        <div>Ranked opportunities: <strong>${esc(rankedCount)}</strong></div>
         <div>Fetch time: <strong>${esc(fetchTime)}s</strong></div>
         <div>Extraction time: <strong>${esc(extractionTime)}s</strong></div>
         <div>Scoring time: <strong>${esc(scoringTime)}s</strong></div>
@@ -1335,7 +1333,7 @@
             <div class="title">Pipeline Complete</div>
             <div class="line">[OK] Extracted ${esc(telemetry.emails_fetched ?? 0)} emails in ${esc(telemetry.extraction_time ?? 0)}s</div>
             <div class="line">[OK] Candidates: ${esc(telemetry.opportunity_candidates ?? 0)} | Non-opportunity skipped: ${esc(telemetry.non_opportunity_skipped ?? 0)}</div>
-            <div class="line">[OK] Non-scholarship skipped: ${esc(telemetry.non_scholarship_skipped ?? 0)} | Scholarships ranked: ${esc(telemetry.scholarship_ranked ?? 0)}</div>
+            <div class="line">[OK] Ranked opportunities: ${esc(telemetry.ranked_opportunities_count ?? 0)}</div>
             <div class="line">[OK] Scored opportunities in ${esc(telemetry.scoring_time ?? 0)}s</div>
             <div class="line">[OK] Generated explanations in ${esc(telemetry.explainer_time ?? 0)}s</div>
           `;

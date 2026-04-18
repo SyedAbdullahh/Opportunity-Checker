@@ -900,8 +900,7 @@ def process_and_rank_inbox(
     telemetry_data.setdefault("explainer_time", 0.0)
     telemetry_data.setdefault("opportunity_candidates", 0)
     telemetry_data.setdefault("non_opportunity_skipped", 0)
-    telemetry_data.setdefault("non_scholarship_skipped", 0)
-    telemetry_data.setdefault("scholarship_ranked", 0)
+    telemetry_data.setdefault("ranked_opportunities_count", 0)
 
     print(f"[PIPELINE] Starting inbox processing for {total_emails} emails", flush=True)
 
@@ -922,17 +921,6 @@ def process_and_rank_inbox(
 
         telemetry_data["opportunity_candidates"] = int(telemetry_data.get("opportunity_candidates", 0)) + 1
 
-        extracted_type = str(extracted.get("opportunity_type") or "").strip().lower()
-        extracted_title = str(extracted.get("title") or "").lower()
-        looks_like_scholarship = extracted_type == "scholarship" or "scholarship" in extracted_title
-        if not looks_like_scholarship:
-            print(
-                f"[PIPELINE] [{index}/{total_emails}] Skipped (non-scholarship type={extracted_type or 'unknown'})",
-                flush=True,
-            )
-            telemetry_data["non_scholarship_skipped"] = int(telemetry_data.get("non_scholarship_skipped", 0)) + 1
-            continue
-
         print(f"[PIPELINE] [{index}/{total_emails}] Scoring opportunity", flush=True)
         scoring_started = time.time()
         score_result = calculate_match_score(profile_data, extracted)
@@ -944,7 +932,7 @@ def process_and_rank_inbox(
             "score_breakdown": score_result.get("breakdown", {}),
         }
         ranked_opportunities.append(combined)
-        telemetry_data["scholarship_ranked"] = int(telemetry_data.get("scholarship_ranked", 0)) + 1
+        telemetry_data["ranked_opportunities_count"] = int(telemetry_data.get("ranked_opportunities_count", 0)) + 1
         print(
             f"[PIPELINE] [{index}/{total_emails}] Added: {combined.get('title', '(No Title)')} | score={combined['total_score']}",
             flush=True,
